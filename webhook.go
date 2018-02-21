@@ -196,7 +196,8 @@ func handleCommandTeam(e event) error {
 			return err
 		}
 
-		if util.TrimTeamName(user["Team"]) != teamID {
+		// if util.TrimTeamName(user["Team"]) != teamID {
+		if strings.ToLower(user["Team"]) != strings.ToLower(teamID) {
 			return fmt.Errorf("Unauthorized")
 		}
 	}
@@ -264,7 +265,8 @@ func handleCommandProposal(e event) error {
 			return err
 		}
 
-		if util.TrimTeamName(user["Team"]) != teamID {
+		// if util.TrimTeamName(user["Team"]) != teamID {
+		if strings.ToLower(user["Team"]) != strings.ToLower(teamID) {
 			return fmt.Errorf("Unauthorized")
 		}
 	}
