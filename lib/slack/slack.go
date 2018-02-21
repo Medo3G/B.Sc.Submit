@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/Jeffail/gabs"
-	"github.com/ramin0/submit/config"
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
 )
 
 const (

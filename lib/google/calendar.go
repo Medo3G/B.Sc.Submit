@@ -1,10 +1,13 @@
 package google
 
 import (
+	"strings"
 	"fmt"
 	"time"
+	// "strconv"
 
-	"github.com/ramin0/submit/config"
+
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
 	calendar "google.golang.org/api/calendar/v3"
 )
 
@@ -36,7 +39,9 @@ func CalendarFreeSlots() ([]*calendar.Event, error) {
 	}
 
 	timeMin, _ := time.Parse(time.RFC3339, config.EvaluationsWeekStart)
-	timeMax, _ := time.Parse(time.RFC3339, config.EvaluationsWeekEnd)
+	// timeMax, _ := time.Parse(time.RFC3339, config.EvaluationsWeekEnd)
+	// daysAhead,_ := strconv.Atoi(config.ReservationDaysAhead)
+	timeMax := time.Now().AddDate(0, 0, 7)//.Format(time.RFC3339)
 	timeNow := time.Now()
 	if timeNow.After(timeMin) {
 		timeMin = timeNow
@@ -54,6 +59,15 @@ func CalendarFreeSlots() ([]*calendar.Event, error) {
 		return nil, err
 	}
 
+	categorySlots := []*calendar.Event{}
+	for _,e := range slots.Items {
+
+		// time.Date
+		// if(e.End.DateTime - e.Start.DateTime > 1){
+		categorySlots = append(categorySlots, e)
+		// }
+
+	}
 	return slots.Items, nil
 }
 
@@ -95,26 +109,35 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 		return err
 	}
 
-	if newSlot.Summary != "FREE" {
+	if !strings.Contains(newSlot.Summary, "FREE") {
+		return fmt.Errorf("slot completely reserved")
+	}
+
+	if strings.Contains(newSlot.Summary, teamName) {
 		return fmt.Errorf("slot already reserved")
 	}
 
 	oldSlot, _ := CalendarTeamSlot(teamName)
 
-	newSlot = &calendar.Event{
-		Summary: teamName,
-		ColorId: "5",
-	}
+	newSlot.Summary = strings.Replace(newSlot.Summary, "FREE", teamName, 1)
+	newSlot.ColorId = "2"
+	// newSlot = &calendar.Event{
+	// 	Summary: teamName,
+	// 	ColorId: "5",
+	// }
 	if _, err := service.Events.Patch(config.EvaluationsCalendarID, slotID, newSlot).Do(); err != nil {
 		return err
 	}
 
 	if oldSlot != nil {
 		oldSlotID := oldSlot.Id
-		oldSlot = &calendar.Event{
-			Summary: "FREE",
-			ColorId: "0",
-		}
+
+		oldSlot.Summary = strings.Replace(oldSlot.Summary, teamName, "FREE", 1)
+		oldSlot.ColorId = "0"
+		// oldSlot = &calendar.Event{
+		// 	Summary: "FREE",
+		// 	ColorId: "0",
+		// }
 		_, err = service.Events.Patch(config.EvaluationsCalendarID, oldSlotID, oldSlot).Do()
 		return err
 	}

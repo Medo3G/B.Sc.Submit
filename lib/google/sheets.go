@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/ramin0/submit/config"
-	"github.com/ramin0/submit/lib/util"
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
+	// "github.com/mostafa-alaa-494/b.sc.submit/lib/util"
 	sheets "google.golang.org/api/sheets/v4"
 )
 
 const (
-	studentsCellRange = "'Students'!A:F"
+	studentsCellRange = "'Students'!A:G"
 	proposalCellRange = "'Proposals'!A:H"
 )
 
@@ -35,24 +35,24 @@ func sheetsService() (*sheets.Service, error) {
 }
 
 // SheetsSubmit func
-func SheetsSubmit(teamName string, url string) error {
-	service, err := sheetsService()
-	if err != nil {
-		return err
-	}
+// func SheetsSubmit(teamName string, url string) error {
+// 	service, err := sheetsService()
+// 	if err != nil {
+// 		return err
+// 	}
 
-	cellRange := fmt.Sprintf(config.EvaluationsCellRange, util.ParseTeamName(teamName))
+// 	cellRange := fmt.Sprintf(config.EvaluationsCellRange, util.ParseTeamName(teamName))
 
-	valueRange := &sheets.ValueRange{
-		Values: [][]interface{}{[]interface{}{url}},
-	}
-	_, err = service.Spreadsheets.Values.Update(config.StudentsSheetID, cellRange, valueRange).ValueInputOption("RAW").Do()
-	if err != nil {
-		return err
-	}
+// 	valueRange := &sheets.ValueRange{
+// 		Values: [][]interface{}{[]interface{}{url}},
+// 	}
+// 	_, err = service.Spreadsheets.Values.Update(config.StudentsSheetID, cellRange, valueRange).ValueInputOption("RAW").Do()
+// 	if err != nil {
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }
 
 // SheetsUserInfoBy func
 func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
@@ -73,10 +73,12 @@ func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
 			"FullName":  valueRow[1].(string),
 			"Email":     valueRow[5].(string),
 			"Group":     valueRow[2].(string),
-			"Team":      util.FormatTeamName(valueRow[3]),
+			// "Team":      util.FormatTeamName(valueRow[3]),
+			"Team":      valueRow[3].(string),
 			"TeamGroup": valueRow[4].(string),
+			"Category":	 valueRow[6].(string),
 		}
-		if userData[field] == identifier {
+		if strings.ToLower(userData[field]) == strings.ToLower(identifier) {
 			return userData, nil
 		}
 	}
@@ -96,10 +98,12 @@ func SheetsTeamMembers(teamName string) ([]map[string]string, error) {
 		return nil, err
 	}
 
-	teamID := util.TrimTeamName(teamName)
+	// teamID := util.TrimTeamName(teamName)
+	teamID := strings.ToLower(teamName)
 	members := []map[string]string{}
 	for _, valueRow := range valueRange.Values {
-		if util.TrimTeamName(valueRow[3]) == teamID {
+		// if util.TrimTeamName(valueRow[3]) == teamID {
+		if strings.ToLower(valueRow[3].(string)) == teamID {
 			members = append(members, map[string]string{
 				"ID":        valueRow[0].(string),
 				"FullName":  valueRow[1].(string),
@@ -129,9 +133,11 @@ func SheetsTeamProposal(teamName string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	teamID := util.TrimTeamName(teamName)
+	// teamID := util.TrimTeamName(teamName)
+	teamID := strings.ToLower(teamName)
 	for _, valueRow := range valueRange.Values[1:] {
-		if util.TrimTeamName(valueRow[0]) == teamID {
+		// if util.TrimTeamName(valueRow[0]) == teamID {
+		if strings.ToLower(valueRow[0].(string)) == teamID {
 			proposal := map[string]interface{}{
 				"QAs":      [][]string{},
 				"Notes":    "",

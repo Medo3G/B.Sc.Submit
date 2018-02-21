@@ -2,16 +2,17 @@ package submit
 
 import (
 	"fmt"
-	"io"
+	// "io"
 	"net/http"
 	"path"
 	"strings"
-	"time"
+	// "time"
+	"log"
 
 	"github.com/go-errors/errors"
-	"github.com/ramin0/submit/config"
-	"github.com/ramin0/submit/lib/google"
-	"github.com/ramin0/submit/lib/slack"
+	// "github.com/mostafa-alaa-494/b.sc.submit/config"
+	"github.com/mostafa-alaa-494/b.sc.submit/lib/google"
+	"github.com/mostafa-alaa-494/b.sc.submit/lib/slack"
 )
 
 var (
@@ -25,7 +26,8 @@ func Mux() http.Handler {
 	for _, f := range []func() (string, http.HandlerFunc){
 		root, webhook,
 		login, logout,
-		proposal, submit, evaluation,
+		// proposal, submit, evaluation,
+		proposal, evaluation,
 		settings, settingsSlack,
 		adminSessions,
 	} {
@@ -98,6 +100,7 @@ func root() (string, http.HandlerFunc) {
 }
 
 func login() (string, http.HandlerFunc) {
+	log.Printf("Handlers.login\n")
 	return "/login", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
 			r.ParseForm()
@@ -159,101 +162,101 @@ func proposal() (string, http.HandlerFunc) {
 	}
 }
 
-func submit() (string, http.HandlerFunc) {
-	return "/submit", func(w http.ResponseWriter, r *http.Request) {
-		if !featureEnabled("submissions") {
-			http.NotFound(w, r)
-			return
-		}
+// func submit() (string, http.HandlerFunc) {
+// 	return "/submit", func(w http.ResponseWriter, r *http.Request) {
+// 		if !featureEnabled("submissions") {
+// 			http.NotFound(w, r)
+// 			return
+// 		}
 
-		if !ensureLoggedIn(w, r) {
-			return
-		}
+// 		if !ensureLoggedIn(w, r) {
+// 			return
+// 		}
 
-		deadline, _ := time.Parse(time.RFC3339, config.SubmissionDeadline)
-		if time.Now().After(deadline) {
-			render(w, r, "submit", map[string]bool{"DeadlinePassed": true})
-			return
-		}
+// 		deadline, _ := time.Parse(time.RFC3339, config.SubmissionDeadline)
+// 		if time.Now().After(deadline) {
+// 			render(w, r, "submit", map[string]bool{"DeadlinePassed": true})
+// 			return
+// 		}
 
-		if featureEnabled("evaluations") {
-			if slot, _ := google.CalendarTeamSlot(currentUser(r).TeamName()); slot == nil {
-				render(w, r, "submit", map[string]bool{"EvaluationMissing": true})
-				return
-			}
-		}
+// 		if featureEnabled("evaluations") {
+// 			if slot, _ := google.CalendarTeamSlot(currentUser(r).TeamName()); slot == nil {
+// 				render(w, r, "submit", map[string]bool{"EvaluationMissing": true})
+// 				return
+// 			}
+// 		}
 
-		if r.Method == http.MethodPost {
-			var err error
-			if err = r.ParseMultipartForm(maxPostSize); nil != err {
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
+// 		if r.Method == http.MethodPost {
+// 			var err error
+// 			if err = r.ParseMultipartForm(maxPostSize); nil != err {
+// 				w.WriteHeader(http.StatusInternalServerError)
+// 				return
+// 			}
 
-			data := map[string]interface{}{}
+// 			data := map[string]interface{}{}
 
-			for _, item := range config.SubmissionsItems {
-				t := item["Type"]
-				data[t] = nil
+// 			for _, item := range config.SubmissionsItems {
+// 				t := item["Type"]
+// 				data[t] = nil
 
-				switch t {
-				case "url":
-					if url := strings.TrimSpace(r.FormValue("submission[url]")); len(url) > 0 {
-						data[t] = url
-					}
-				case "file":
-					if fileHeaders := r.MultipartForm.File["submission[file]"]; len(fileHeaders) > 0 {
-						if file, err := fileHeaders[0].Open(); err == nil {
-							data[t] = map[string]interface{}{
-								"File":     file,
-								"Filename": fileHeaders[0].Filename,
-							}
-						}
-					}
-				}
-			}
+// 				switch t {
+// 				case "url":
+// 					if url := strings.TrimSpace(r.FormValue("submission[url]")); len(url) > 0 {
+// 						data[t] = url
+// 					}
+// 				case "file":
+// 					if fileHeaders := r.MultipartForm.File["submission[file]"]; len(fileHeaders) > 0 {
+// 						if file, err := fileHeaders[0].Open(); err == nil {
+// 							data[t] = map[string]interface{}{
+// 								"File":     file,
+// 								"Filename": fileHeaders[0].Filename,
+// 							}
+// 						}
+// 					}
+// 				}
+// 			}
 
-			for _, v := range data {
-				if v == nil {
-					render(w, r, "submit", map[string]interface{}{
-						"Flash": "Make sure all fields are populated",
-						"Items": config.SubmissionsItems,
-					})
-					return
-				}
-			}
+// 			for _, v := range data {
+// 				if v == nil {
+// 					render(w, r, "submit", map[string]interface{}{
+// 						"Flash": "Make sure all fields are populated",
+// 						"Items": config.SubmissionsItems,
+// 					})
+// 					return
+// 				}
+// 			}
 
-			renderData := map[string]interface{}{
-				"Items":   config.SubmissionsItems,
-				"Success": true,
-			}
+// 			renderData := map[string]interface{}{
+// 				"Items":   config.SubmissionsItems,
+// 				"Success": true,
+// 			}
 
-			for t, d := range data {
-				switch t {
-				case "url":
-					url := d.(string)
-					err := google.SheetsSubmit(currentUser(r).TeamName(), url)
-					if err != nil {
-						panic(err)
-					}
-				case "file":
-					file := d.(map[string]interface{})["File"].(io.Reader)
-					filename := d.(map[string]interface{})["Filename"].(string)
-					shareURL, err := google.DriveSubmit(currentUser(r).Info(), file, filename)
-					if err != nil {
-						panic(err)
-					}
-					renderData["ShareURL"] = shareURL
-				}
-			}
+// 			for t, d := range data {
+// 				switch t {
+// 				case "url":
+// 					url := d.(string)
+// 					err := google.SheetsSubmit(currentUser(r).TeamName(), url)
+// 					if err != nil {
+// 						panic(err)
+// 					}
+// 				case "file":
+// 					file := d.(map[string]interface{})["File"].(io.Reader)
+// 					filename := d.(map[string]interface{})["Filename"].(string)
+// 					shareURL, err := google.DriveSubmit(currentUser(r).Info(), file, filename)
+// 					if err != nil {
+// 						panic(err)
+// 					}
+// 					renderData["ShareURL"] = shareURL
+// 				}
+// 			}
 
-			render(w, r, "submit", renderData)
-			return
-		}
+// 			render(w, r, "submit", renderData)
+// 			return
+// 		}
 
-		render(w, r, "submit", map[string]interface{}{"Items": config.SubmissionsItems})
-	}
-}
+// 		render(w, r, "submit", map[string]interface{}{"Items": config.SubmissionsItems})
+// 	}
+// }
 
 func evaluation() (string, http.HandlerFunc) {
 	return "/evaluation", func(w http.ResponseWriter, r *http.Request) {
@@ -271,7 +274,9 @@ func evaluation() (string, http.HandlerFunc) {
 
 			slotID := strings.TrimSpace(r.FormValue("slot[id]"))
 
-			if err := google.CalendarReserveTeamSlot(currentUser(r).TeamName(), slotID); err != nil {
+			reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
+			// if err := google.CalendarReserveTeamSlot(currentUser(r).TeamName(), slotID); err != nil {
+			if err := google.CalendarReserveTeamSlot(reservationTeamName, slotID); err != nil {
 				render(w, r, "evaluation", map[string]string{
 					"Flash": err.Error(),
 				})
@@ -282,7 +287,9 @@ func evaluation() (string, http.HandlerFunc) {
 		}
 
 		var teamSlot *Slot
-		slot, err := google.CalendarTeamSlot(currentUser(r).TeamName())
+		reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
+		// slot, err := google.CalendarTeamSlot(currentUser(r).TeamName())
+		slot, err := google.CalendarTeamSlot(reservationTeamName)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return

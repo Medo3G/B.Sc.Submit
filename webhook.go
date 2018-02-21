@@ -8,10 +8,10 @@ import (
 	"strings"
 
 	"github.com/go-errors/errors"
-	"github.com/ramin0/submit/config"
-	"github.com/ramin0/submit/lib/google"
-	"github.com/ramin0/submit/lib/slack"
-	"github.com/ramin0/submit/lib/util"
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
+	"github.com/mostafa-alaa-494/b.sc.submit/lib/google"
+	"github.com/mostafa-alaa-494/b.sc.submit/lib/slack"
+	"github.com/mostafa-alaa-494/b.sc.submit/lib/util"
 )
 
 var (

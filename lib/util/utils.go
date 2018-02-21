@@ -2,10 +2,10 @@ package util
 
 import (
 	"fmt"
-	"regexp"
-	"strconv"
+	// "regexp"
+	// "strconv"
 
-	"github.com/ramin0/submit/config"
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
 )
 
 // FormatTeamName func
@@ -14,14 +14,14 @@ func FormatTeamName(team interface{}) string {
 }
 
 // ParseTeamName func
-func ParseTeamName(teamName string) (team int) {
-	var teamString string
-	fmt.Sscanf(teamName, config.TeamNameFormat, &teamString)
-	team, _ = strconv.Atoi(teamString)
-	return
-}
+// func ParseTeamName(teamName string) (team int) {
+// 	var teamString string
+// 	fmt.Sscanf(teamName, config.TeamNameFormat, &teamString)
+// 	team, _ = strconv.Atoi(teamString)
+// 	return
+// }
 
 // TrimTeamName func
-func TrimTeamName(team interface{}) string {
-	return regexp.MustCompile("[^\\d]").ReplaceAllString(fmt.Sprintf("%s", team), "")
-}
+// func TrimTeamName(team interface{}) string {
+// 	return regexp.MustCompile("[^\\d]").ReplaceAllString(fmt.Sprintf("%s", team), "")
+// }
