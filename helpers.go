@@ -17,6 +17,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"log"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/mostafa-alaa-494/b.sc.submit/config"
@@ -142,7 +143,7 @@ func logIn(username, password string) (*User, error) {
 		}, nil
 	}
 
-	// log.Printf("Checking credentials ...\n")
+	log.Printf("Checking credentials ...\n")
 
 	if _, err := google.SheetsUserInfoBy("UserName", username); err != nil {
 		return nil, fmt.Errorf("Username was not recognized as one of the system users; Please contact the admins")
