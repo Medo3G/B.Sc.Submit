@@ -131,6 +131,7 @@ func isLoggedIn(r *http.Request) bool {
 }
 
 func logIn(username, password string) (*User, error) {
+	log.Println("Pas: "+config.AdminPassword)
 	if strings.HasPrefix(username, "admin:") && password == config.AdminPassword {
 		username = strings.TrimPrefix(username, "admin:")
 		return &User{
@@ -143,7 +144,7 @@ func logIn(username, password string) (*User, error) {
 		}, nil
 	}
 
-	log.Printf("Checking credentials ...\n")
+	log.Printf("Checking credentials .......\n")
 
 	if _, err := google.SheetsUserInfoBy("UserName", username); err != nil {
 		return nil, fmt.Errorf("Username was not recognized as one of the system users; Please contact the admins")

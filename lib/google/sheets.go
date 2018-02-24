@@ -1,6 +1,7 @@
 package google
 
 import (
+	"log"
 	"fmt"
 	"strings"
 
@@ -56,16 +57,19 @@ func sheetsService() (*sheets.Service, error) {
 
 // SheetsUserInfoBy func
 func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
+	log.Println("Checking info")
 	service, err := sheetsService()
 	if err != nil {
 		return nil, err
 	}
 
+	log.Println("Getting Values")
 	valueRange, err := service.Spreadsheets.Values.Get(config.StudentsSheetID, studentsCellRange).Do()
 	if err != nil {
 		return nil, err
 	}
 
+	log.Println("Searching")
 	for _, valueRow := range valueRange.Values {
 		userData := map[string]string{
 			"ID":        valueRow[0].(string),
@@ -78,6 +82,7 @@ func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
 			"TeamGroup": valueRow[4].(string),
 			"Category":	 valueRow[6].(string),
 		}
+		log.Println(userData)
 		if strings.ToLower(userData[field]) == strings.ToLower(identifier) {
 			return userData, nil
 		}
