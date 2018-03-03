@@ -9,10 +9,10 @@
 
     {{if .DeadlinePassed}}
       <p class="mdl-color-text--pink">Deadline reached.</p>
-    {{else if .EvaluationMissing}}
+    {{else if .reserveMissing}}
       <p>
-        <a href="/evaluation">Reserve</a>
-        an evaluation slot first.
+        <a href="/reserve">Reserve</a>
+        a slot first.
       </p>
     {{else}}
       <form action="/submit" method="POST" enctype="multipart/form-data">

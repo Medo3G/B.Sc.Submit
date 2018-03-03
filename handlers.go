@@ -26,8 +26,8 @@ func Mux() http.Handler {
 	for _, f := range []func() (string, http.HandlerFunc){
 		root, webhook,
 		login, logout,
-		// proposal, submit, evaluation,
-		proposal, evaluation,
+		// proposal, submit, reserve,
+		proposal, reserve,
 		settings, settingsSlack,
 		adminSessions,
 	} {
@@ -258,9 +258,9 @@ func proposal() (string, http.HandlerFunc) {
 // 	}
 // }
 
-func evaluation() (string, http.HandlerFunc) {
-	return "/evaluation", func(w http.ResponseWriter, r *http.Request) {
-		if !featureEnabled("evaluations") {
+func reserve() (string, http.HandlerFunc) {
+	return "/reserve", func(w http.ResponseWriter, r *http.Request) {
+		if !featureEnabled("reservations") {
 			http.NotFound(w, r)
 			return
 		}
@@ -277,11 +277,11 @@ func evaluation() (string, http.HandlerFunc) {
 			reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
 			// if err := google.CalendarReserveTeamSlot(currentUser(r).TeamName(), slotID); err != nil {
 			if err := google.CalendarReserveTeamSlot(reservationTeamName, slotID); err != nil {
-				render(w, r, "evaluation", map[string]string{
+				render(w, r, "reserve", map[string]string{
 					"Flash": err.Error(),
 				})
 			} else {
-				http.Redirect(w, r, "/evaluation", http.StatusFound)
+				http.Redirect(w, r, "/reserve", http.StatusFound)
 			}
 			return
 		}
@@ -314,10 +314,11 @@ func evaluation() (string, http.HandlerFunc) {
 			schedule[currentDay] = append(schedule[currentDay], newSlot)
 		}
 
-		render(w, r, "evaluation", map[string]interface{}{
+		render(w, r, "reserve", map[string]interface{}{
 			"Schedule": schedule,
 			"Reserved": teamSlot != nil,
 			"Slot":     teamSlot,
+			"Slots": []*Slot{teamSlot},
 		})
 	}
 }

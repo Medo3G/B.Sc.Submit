@@ -65,7 +65,7 @@
           
             <!-- <td class="mdl-data-table__cell--non-numeric">No confirmation</td> -->
             <td>
-              <form action="/evaluation" method="POST">
+              <form action="/reserve" method="POST">
               <input type="hidden" name="slot[id]" value="{{.ID}}">
               <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                 Cancel
@@ -109,7 +109,7 @@
                     {{.StartTime}} - {{.EndTime}}
                   </span>
                   <span class="mdl-list__item-secondary-action">
-                    <form action="/evaluation" method="POST">
+                    <form action="/reserve" method="POST">
                       <input type="hidden" name="slot[id]" value="{{.ID}}">
                       <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
                         Reserve
