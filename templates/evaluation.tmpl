@@ -1,26 +1,82 @@
 {{define "content"}}
   <div class="mdl-card__title">
-    <h2 class="mdl-card__title-text">Evaluation</h2>
+    <h2 class="mdl-card__title-text">Reserve</h2>
   </div>
   <div class="mdl-card__supporting-text">
     {{if not (empty .Flash)}}
       <p class="mdl-color-text--pink">{{.Flash}}</p>
     {{end}}
 
+
     {{if .Reserved}}
-      <div id="slot">
-        <table class="mdl-data-table">
-          <tbody>
-            <tr>
-              <td class="mdl-data-table__cell--non-numeric"><strong>Date:</strong></td>
-              <td class="mdl-data-table__cell--non-numeric">{{.Slot.Date}}</td>
-            </tr>
-            <tr>
-              <td class="mdl-data-table__cell--non-numeric"><strong>Time:</strong></td>
-              <td class="mdl-data-table__cell--non-numeric">{{.Slot.Time}}</td>
-            </tr>
-          </tbody>
-        </table>
+    <div id="slot">
+      <table class="mdl-data-table">
+        <tbody>
+          <tr>
+            <!-- <td></td>
+                      <td></td>
+                      </tr> -->
+            <td class="mdl-data-table__cell--non-numeric">
+              <strong>Date:</strong>
+            </td>
+            {{range .Slots}}
+          
+            <td class="mdl-data-table__cell--non-numeric">{{.Date}}</td>
+          
+            {{end}}
+          </tr>
+
+          <tr>
+            <!-- <td></td>
+                                <td></td>
+                                </tr> -->
+            <td class="mdl-data-table__cell--non-numeric">
+              <strong>Start Time:</strong>
+            </td>
+            {{range .Slots}}
+          
+            <td class="mdl-data-table__cell--non-numeric">{{.StartTime}}</td>
+          
+            {{end}}
+          </tr>
+
+          <tr>
+            <!-- <td></td>
+                                <td></td>
+                                </tr> -->
+            <td class="mdl-data-table__cell--non-numeric">
+              <strong>End Time:</strong>
+            </td>
+            {{range .Slots}}
+          
+            <td class="mdl-data-table__cell--non-numeric">{{.EndTime}}</td>
+          
+            {{end}}
+          </tr>
+
+          <tr>
+            <!-- <td></td>
+                      <td></td>
+                      </tr> -->
+            <td class="mdl-data-table__cell--non-numeric">
+              <strong>Cancel Reservation:</strong>
+            </td>
+            {{range .Slots}}
+          
+            <!-- <td class="mdl-data-table__cell--non-numeric">No confirmation</td> -->
+            <td>
+              <form action="/evaluation" method="POST">
+              <input type="hidden" name="slot[id]" value="{{.ID}}">
+              <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+                Cancel
+              </button>
+            </form>
+          </td>
+            {{end}}
+          </tr>
+           
+</tbody>
+</table>
 
         {{if .Schedule}}
           <br />
@@ -50,7 +106,7 @@
               <ul class="mdl-list">
                 <li class="mdl-list__item">
                   <span class="mdl-list__item-primary-content">
-                    {{.Time}}
+                    {{.StartTime}} - {{.EndTime}}
                   </span>
                   <span class="mdl-list__item-secondary-action">
                     <form action="/evaluation" method="POST">
