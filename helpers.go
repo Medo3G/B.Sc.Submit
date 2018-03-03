@@ -131,7 +131,7 @@ func isLoggedIn(r *http.Request) bool {
 }
 
 func logIn(username, password string) (*User, error) {
-	log.Println("Pas: "+config.AdminPassword)
+	
 	if strings.HasPrefix(username, "admin:") && password == config.AdminPassword {
 		username = strings.TrimPrefix(username, "admin:")
 		return &User{
