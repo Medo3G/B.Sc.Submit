@@ -327,10 +327,13 @@ func newSlotFromEvent(event *calendar.Event) *Slot {
 	eventDateTime, _ := time.Parse(time.RFC3339, event.Start.DateTime)
 	eventDate := eventDateTime.Format("Monday, January 2")
 	eventTime := eventDateTime.Format("3:04 PM")
+	eventEndDateTime, _ := time.Parse(time.RFC3339, event.End.DateTime)
+	eventEndTime := eventEndDateTime.Format("3:04 PM")
 
 	return &Slot{
 		ID:   event.Id,
 		Date: eventDate,
-		Time: eventTime,
+		StartTime: eventTime,
+		EndTime: eventEndTime,
 	}
 }

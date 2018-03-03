@@ -137,5 +137,6 @@ func (user *User) fetchInfo() error {
 type Slot struct {
 	ID   string
 	Date string
-	Time string
+	StartTime string
+	EndTime string
 }
