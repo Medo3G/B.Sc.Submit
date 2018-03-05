@@ -1,6 +1,7 @@
 package submit
 
 import (
+	"strconv"
 	"fmt"
 	// "io"
 	"net/http"
@@ -27,7 +28,7 @@ func Mux() http.Handler {
 		root, webhook,
 		login, logout,
 		// proposal, submit, reserve,
-		proposal, reserve,
+		proposal, reserveVive,// reserveVive,
 		settings, settingsSlack,
 		adminSessions,
 	} {
@@ -258,8 +259,10 @@ func proposal() (string, http.HandlerFunc) {
 // 	}
 // }
 
-func reserve() (string, http.HandlerFunc) {
-	return "/reserve", func(w http.ResponseWriter, r *http.Request) {
+
+
+func reserveVive() (string, http.HandlerFunc) {
+	return "/reserveVive", func(w http.ResponseWriter, r *http.Request) {
 		if !featureEnabled("reservations") {
 			http.NotFound(w, r)
 			return
@@ -273,15 +276,28 @@ func reserve() (string, http.HandlerFunc) {
 			r.ParseForm()
 
 			slotID := strings.TrimSpace(r.FormValue("slot[id]"))
+			unreserve,_ := strconv.ParseBool(strings.TrimSpace(r.FormValue("cancel")))
 
 			reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
 			// if err := google.CalendarReserveTeamSlot(currentUser(r).TeamName(), slotID); err != nil {
+			if(unreserve){
+
+				if err := google.CalendarUnReserveTeamSlot(reservationTeamName, slotID); err != nil {
+					render(w, r, "reserve", map[string]string{
+						"Flash": err.Error(),
+					})
+				} else {
+					http.Redirect(w, r, "/reserveVive", http.StatusFound)
+				}
+				return
+				
+			}
 			if err := google.CalendarReserveTeamSlot(reservationTeamName, slotID); err != nil {
 				render(w, r, "reserve", map[string]string{
 					"Flash": err.Error(),
 				})
 			} else {
-				http.Redirect(w, r, "/reserve", http.StatusFound)
+				http.Redirect(w, r, "/reserveVive", http.StatusFound)
 			}
 			return
 		}
@@ -297,6 +313,20 @@ func reserve() (string, http.HandlerFunc) {
 		if slot != nil {
 			teamSlot = newSlotFromEvent(slot)
 		}
+
+		teamSlots := []*Slot{}
+		tSlots, _ := google.CalendarAllTeamSlot(reservationTeamName)
+		if(tSlots != nil){
+
+			for _, slot := range tSlots.Items {
+			
+				newSlot := newSlotFromEvent(slot)
+				teamSlots = append(teamSlots, newSlot)
+
+			}
+
+		}
+
 
 		schedule := [][]*Slot{}
 
@@ -318,10 +348,11 @@ func reserve() (string, http.HandlerFunc) {
 			"Schedule": schedule,
 			"Reserved": teamSlot != nil,
 			"Slot":     teamSlot,
-			"Slots": []*Slot{teamSlot},
+			"Slots": teamSlots,
 		})
 	}
 }
+
 
 func settings() (string, http.HandlerFunc) {
 	return "/settings", func(w http.ResponseWriter, r *http.Request) {

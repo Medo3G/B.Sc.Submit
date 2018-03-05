@@ -1,10 +1,11 @@
 package google
 
 import (
+	"log"
 	"strings"
 	"fmt"
 	"time"
-	// "strconv"
+	"strconv"
 
 
 	"github.com/mostafa-alaa-494/b.sc.submit/config"
@@ -97,6 +98,58 @@ func CalendarTeamSlot(teamName string) (*calendar.Event, error) {
 	return slots.Items[0], nil
 }
 
+// CalendarAllTeamSlot func
+func CalendarAllTeamSlot(teamName string) (*calendar.Events, error) {
+	service, err := calendarService()
+	if err != nil {
+		return nil, err
+	}
+
+	slots, err := service.Events.
+		List(config.EvaluationsCalendarID).
+		SingleEvents(true).
+		// MaxResults(1).
+		TimeMin(config.EvaluationsWeekStart).
+		TimeMax(config.EvaluationsWeekEnd).
+		Q(teamName).
+		Do()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(slots.Items) == 0 {
+		return nil, nil
+	}
+
+	return slots, nil
+}
+
+// CalendarUnReserveTeamSlot func
+func CalendarUnReserveTeamSlot(teamName, slotID string) error {
+
+	service, err := calendarService()
+	if err != nil {
+		return err
+	}
+	oldSlot, err := service.Events.Get(config.EvaluationsCalendarID, slotID).Do()
+	if err != nil {
+		return err
+	}
+
+		oldSlotID := oldSlot.Id
+
+		oldSlot.Summary = strings.Replace(oldSlot.Summary, teamName, "FREE", 1)
+		oldSlot.ColorId = "0"
+		// oldSlot = &calendar.Event{
+		// 	Summary: "FREE",
+		// 	ColorId: "0",
+		// }
+		_, err = service.Events.Patch(config.EvaluationsCalendarID, oldSlotID, oldSlot).Do()
+		return err
+
+
+}
+
 // CalendarReserveTeamSlot func
 func CalendarReserveTeamSlot(teamName, slotID string) error {
 	service, err := calendarService()
@@ -117,8 +170,28 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 		return fmt.Errorf("slot already reserved")
 	}
 
-	oldSlot, _ := CalendarTeamSlot(teamName)
+	slots,err := CalendarAllTeamSlot(teamName)
+	teamTotalReservedTime := 0.0
+	if(slots != nil){
+		for _,e := range slots.Items {
 
+			endTime, _ := time.Parse(time.RFC3339, e.End.DateTime)
+			startTime, _ := time.Parse(time.RFC3339, e.Start.DateTime)
+			teamTotalReservedTime += (endTime.Sub(startTime)).Minutes()
+		}
+	}
+	endTime, _ := time.Parse(time.RFC3339, newSlot.End.DateTime)
+	startTime, _ := time.Parse(time.RFC3339, newSlot.Start.DateTime)
+
+	max, _ := strconv.ParseFloat(config.BscVRWeeklyMinutes, 64)
+	if teamTotalReservedTime + (endTime.Sub(startTime)).Minutes() > max {
+		return fmt.Errorf("You already resevred a total of %f minutes. Adding his slot will exceed your maximum allocated %f minutes",teamTotalReservedTime, max)
+	}
+	log.Println("Total Slots: ",teamTotalReservedTime)
+
+
+	// oldSlot, _ := CalendarTeamSlot(teamName)	
+	
 	newSlot.Summary = strings.Replace(newSlot.Summary, "FREE", teamName, 1)
 	newSlot.ColorId = "2"
 	// newSlot = &calendar.Event{
@@ -129,18 +202,18 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 		return err
 	}
 
-	if oldSlot != nil {
-		oldSlotID := oldSlot.Id
+	// if oldSlot != nil {
+	// 	oldSlotID := oldSlot.Id
 
-		oldSlot.Summary = strings.Replace(oldSlot.Summary, teamName, "FREE", 1)
-		oldSlot.ColorId = "0"
-		// oldSlot = &calendar.Event{
-		// 	Summary: "FREE",
-		// 	ColorId: "0",
-		// }
-		_, err = service.Events.Patch(config.EvaluationsCalendarID, oldSlotID, oldSlot).Do()
-		return err
-	}
+	// 	oldSlot.Summary = strings.Replace(oldSlot.Summary, teamName, "FREE", 1)
+	// 	oldSlot.ColorId = "0"
+	// 	// oldSlot = &calendar.Event{
+	// 	// 	Summary: "FREE",
+	// 	// 	ColorId: "0",
+	// 	// }
+	// 	_, err = service.Events.Patch(config.EvaluationsCalendarID, oldSlotID, oldSlot).Do()
+	// 	return err
+	// }
 
 	return nil
 }
