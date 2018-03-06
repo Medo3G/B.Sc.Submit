@@ -159,7 +159,8 @@ func logIn(username, password string) (*User, error) {
 	}
 
 	// Remove before publishing================================================!!!!
-	if strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == "guc"{//config.TestPassword {
+	// if strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == "guc"{//config.TestPassword {
+	if password == "guc"{//config.TestPassword {
 		if user, err := fetchUserFromSheet(username); err == nil {
 			return user, nil
 		}

@@ -39,10 +39,10 @@ func CalendarFreeSlots() ([]*calendar.Event, error) {
 		return nil, err
 	}
 
-	timeMin, _ := time.Parse(time.RFC3339, config.EvaluationsWeekStart)
+	timeMin := CalendarStartOfTheWeek(time.Now())//time.Parse(time.RFC3339, config.EvaluationsWeekStart)
 	// timeMax, _ := time.Parse(time.RFC3339, config.EvaluationsWeekEnd)
-	// daysAhead,_ := strconv.Atoi(config.ReservationDaysAhead)
-	timeMax := time.Now().AddDate(0, 0, 7)//.Format(time.RFC3339)
+	daysAhead,_ := strconv.Atoi(config.ReservationDaysAhead)
+	timeMax := timeMin.AddDate(0, 0, daysAhead)//.Format(time.RFC3339)
 	timeNow := time.Now()
 	if timeNow.After(timeMin) {
 		timeMin = timeNow
@@ -98,6 +98,63 @@ func CalendarTeamSlot(teamName string) (*calendar.Event, error) {
 	return slots.Items[0], nil
 }
 
+// CalendarStartOfTheWeek func
+func CalendarStartOfTheWeek(weekDay time.Time) (time.Time){
+
+	start := weekDay
+	
+	for(start.Weekday() != time.Saturday){
+		start = start.AddDate(0,0,-1)
+	}
+	for(start.Hour() != 0){
+		start = start.Add(time.Hour*-1)
+	}
+	return start
+
+}
+
+// CalendarAllTeamSlotsInWeek func
+func CalendarAllTeamSlotsInWeek(teamName string, weekEvent *calendar.Event) (*calendar.Events, error) {
+	service, err := calendarService()
+	if err != nil {
+		return nil, err
+	}
+
+	s,_ := time.Parse(time.RFC3339, weekEvent.Start.DateTime)
+	start := CalendarStartOfTheWeek(s)
+	end := start.AddDate(0, 0, 7)
+	
+	startString := strings.Replace(start.String(), " ","T",1)
+	endString := strings.Replace(end.String(), " ","T",1)
+	startString = strings.Replace(startString, " ","",1)
+	endString = strings.Replace(endString, " ","",1)
+	startString = strings.Replace(startString, " EET","",1)
+	endString = strings.Replace(endString, " EET","",1)
+
+	log.Println("Start: ",startString)
+	log.Println("End: ",endString)
+
+	
+	slots, err := service.Events.
+		List(config.EvaluationsCalendarID).
+		SingleEvents(true).
+		// MaxResults(1).
+		OrderBy("startTime").
+		TimeMin(startString).
+		TimeMax(endString).
+		Q(teamName).
+		Do()
+	if err != nil {
+		return nil, err
+	}
+
+	if len(slots.Items) == 0 {
+		return nil, nil
+	}
+
+	return slots, nil
+}
+
 // CalendarAllTeamSlot func
 func CalendarAllTeamSlot(teamName string) (*calendar.Events, error) {
 	service, err := calendarService()
@@ -109,6 +166,7 @@ func CalendarAllTeamSlot(teamName string) (*calendar.Events, error) {
 		List(config.EvaluationsCalendarID).
 		SingleEvents(true).
 		// MaxResults(1).
+		OrderBy("startTime").
 		TimeMin(config.EvaluationsWeekStart).
 		TimeMax(config.EvaluationsWeekEnd).
 		Q(teamName).
@@ -170,7 +228,7 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 		return fmt.Errorf("slot already reserved")
 	}
 
-	slots,err := CalendarAllTeamSlot(teamName)
+	slots,err := CalendarAllTeamSlotsInWeek(teamName,newSlot)// CalendarAllTeamSlot(teamName)
 	teamTotalReservedTime := 0.0
 	if(slots != nil){
 		for _,e := range slots.Items {
@@ -185,7 +243,7 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 
 	max, _ := strconv.ParseFloat(config.BscVRWeeklyMinutes, 64)
 	if teamTotalReservedTime + (endTime.Sub(startTime)).Minutes() > max {
-		return fmt.Errorf("You already resevred a total of %f minutes. Adding his slot will exceed your maximum allocated %f minutes",teamTotalReservedTime, max)
+		return fmt.Errorf("You already resevred a total of %.0f minutes. Adding this slot will exceed your maximum allocated %.0f minutes",teamTotalReservedTime, max)
 	}
 	log.Println("Total Slots: ",teamTotalReservedTime)
 
