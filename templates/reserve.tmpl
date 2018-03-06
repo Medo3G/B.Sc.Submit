@@ -9,8 +9,8 @@
 
 
     {{if .Reserved}}
-    <div id="slot">
-      <table class="mdl-data-table">
+    <div id="slot" style="overflow-x:auto;">
+      <table class="mdl-data-table" border="1px solid black">
         <tbody>
           <tr>
             <!-- <td></td>
@@ -21,7 +21,7 @@
             </td>
             {{range .Slots}}
           
-            <td class="mdl-data-table__cell--non-numeric">{{.Date}}</td>
+            <td style="text-align:center;" class="mdl-data-table__cell--non-numeric">{{.Date}}</td>
           
             {{end}}
           </tr>
@@ -35,7 +35,7 @@
             </td>
             {{range .Slots}}
           
-            <td class="mdl-data-table__cell--non-numeric">{{.StartTime}}</td>
+            <td style="text-align:center;" class="mdl-data-table__cell--non-numeric">{{.StartTime}}</td>
           
             {{end}}
           </tr>
@@ -49,7 +49,7 @@
             </td>
             {{range .Slots}}
           
-            <td class="mdl-data-table__cell--non-numeric">{{.EndTime}}</td>
+            <td style="text-align:center;" class="mdl-data-table__cell--non-numeric">{{.EndTime}}</td>
           
             {{end}}
           </tr>
@@ -64,7 +64,7 @@
             {{range .Slots}}
           
             <!-- <td class="mdl-data-table__cell--non-numeric">No confirmation</td> -->
-            <td>
+            <td style="text-align:center;">
               <form action="/reserveVive" method="POST">
               <input type="hidden" name="slot[id]" value="{{.ID}}">
               <input type="hidden" name="cancel" value="true">
