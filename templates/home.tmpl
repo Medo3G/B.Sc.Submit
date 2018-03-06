@@ -15,10 +15,10 @@
         </tr>
         {{if currentUser.TeamName}}
           <tr>
-            <td class="mdl-data-table__cell--non-numeric"><strong>Team:</strong></td>
+            <td class="mdl-data-table__cell--non-numeric"><strong>Project:</strong></td>
             <td class="mdl-data-table__cell--non-numeric">{{currentUser.TeamName}}</td>
           </tr>
-          {{if currentUser.TeamMembers}}
+          <!-- {{if currentUser.TeamMembers}}
             <tr>
               <td class="mdl-data-table__cell--non-numeric" style="vertical-align: top;"><strong>Members:</strong></td>
               <td class="mdl-data-table__cell--non-numeric">
@@ -40,7 +40,7 @@
                 </table>
               </td>
             </tr>
-          {{end}}
+          {{end}} -->
         {{end}}
       </tbody>
     </table>
