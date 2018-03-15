@@ -197,7 +197,7 @@ func CalendarUnReserveTeamSlot(teamName, slotID string) error {
 		oldSlotID := oldSlot.Id
 
 		oldSlot.Summary = strings.Replace(oldSlot.Summary, teamName, "FREE", 1)
-		oldSlot.ColorId = "0"
+		// oldSlot.ColorId = "0"
 		// oldSlot = &calendar.Event{
 		// 	Summary: "FREE",
 		// 	ColorId: "0",
@@ -251,7 +251,7 @@ func CalendarReserveTeamSlot(teamName, slotID string) error {
 	// oldSlot, _ := CalendarTeamSlot(teamName)	
 	
 	newSlot.Summary = strings.Replace(newSlot.Summary, "FREE", teamName, 1)
-	newSlot.ColorId = "2"
+	// newSlot.ColorId = "2"
 	// newSlot = &calendar.Event{
 	// 	Summary: teamName,
 	// 	ColorId: "5",
