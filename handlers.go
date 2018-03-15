@@ -1,6 +1,7 @@
 package submit
 
 import (
+	"time"
 	"strconv"
 	"fmt"
 	// "io"
@@ -302,17 +303,7 @@ func reserveVive() (string, http.HandlerFunc) {
 			return
 		}
 
-		var teamSlot *Slot
 		reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
-		// slot, err := google.CalendarTeamSlot(currentUser(r).TeamName())
-		slot, err := google.CalendarTeamSlot(reservationTeamName)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-		if slot != nil {
-			teamSlot = newSlotFromEvent(slot)
-		}
 
 		teamSlots := []*Slot{}
 		tSlots, _ := google.CalendarAllTeamSlot(reservationTeamName)
@@ -320,8 +311,12 @@ func reserveVive() (string, http.HandlerFunc) {
 
 			for _, slot := range tSlots.Items {
 			
-				newSlot := newSlotFromEvent(slot)
-				teamSlots = append(teamSlots, newSlot)
+				s,_ := time.Parse(time.RFC3339, slot.Start.DateTime)
+				
+				if(time.Now().Before(s)){
+					newSlot := newSlotFromEvent(slot)
+					teamSlots = append(teamSlots, newSlot)
+				}
 
 			}
 
@@ -346,8 +341,7 @@ func reserveVive() (string, http.HandlerFunc) {
 
 		render(w, r, "reserve", map[string]interface{}{
 			"Schedule": schedule,
-			"Reserved": teamSlot != nil,
-			"Slot":     teamSlot,
+			"Reserved": len(teamSlots) != 0,
 			"Slots": teamSlots,
 		})
 	}
