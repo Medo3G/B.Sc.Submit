@@ -143,6 +143,12 @@ func logIn(username, password string) (*User, error) {
 			teamGroup: "admins",
 		}, nil
 	}
+	
+	if strings.HasPrefix(strings.ToLower(username), "teststudent") && password == config.TestPassword {
+		if user, err := fetchUserFromSheet(username); err == nil {
+			return user, nil
+		}
+	}
 
 	log.Printf("Checking credentials .......\n")
 
@@ -150,17 +156,9 @@ func logIn(username, password string) (*User, error) {
 		return nil, fmt.Errorf("Username was not recognized as one of the system users; Please contact the admins")
 	}
 
-	// log.Println(info);
-
-	if strings.HasPrefix(strings.ToLower(username), "teststudent") && password == "guc"{//config.TestPassword {
-		if user, err := fetchUserFromSheet(username); err == nil {
-			return user, nil
-		}
-	}
-
-	// Remove before publishing================================================!!!!
-	// if strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == "guc"{//config.TestPassword {
-	if password == "guc"{//config.TestPassword {
+	
+	// Remove before publishing================================================
+	if password == config.TestPassword {//strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == config.TestPassword {
 		if user, err := fetchUserFromSheet(username); err == nil {
 			return user, nil
 		}
