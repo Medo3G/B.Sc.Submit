@@ -55,6 +55,17 @@
           </tr>
 
           <tr>
+            <td class="mdl-data-table__cell--non-numeric">
+              <strong>Resource:</strong>
+            </td>
+            {{range .Slots}}
+          
+            <td style="text-align:center;" class="mdl-data-table__cell--non-numeric">{{.Resource}}</td>
+          
+            {{end}}
+          </tr>
+
+          <tr>
             <!-- <td></td>
                       <td></td>
                       </tr> -->
@@ -108,6 +119,8 @@
                 <li class="mdl-list__item">
                   <span class="mdl-list__item-primary-content">
                     {{.StartTime}} - {{.EndTime}}
+                    </br>
+                    {{.Resource}}
                   </span>
                   <span class="mdl-list__item-secondary-action">
                     <form action="/reserveVive" method="POST">

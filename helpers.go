@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"math/rand"
 	"net/http"
 	"net/url"
@@ -17,7 +18,6 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"log"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/mostafa-alaa-494/b.sc.submit/config"
@@ -131,7 +131,7 @@ func isLoggedIn(r *http.Request) bool {
 }
 
 func logIn(username, password string) (*User, error) {
-	
+
 	if strings.HasPrefix(username, "admin:") && password == config.AdminPassword {
 		username = strings.TrimPrefix(username, "admin:")
 		return &User{
@@ -143,7 +143,7 @@ func logIn(username, password string) (*User, error) {
 			teamGroup: "admins",
 		}, nil
 	}
-	
+
 	if strings.HasPrefix(strings.ToLower(username), "teststudent") && password == config.TestPassword {
 		if user, err := fetchUserFromSheet(username); err == nil {
 			return user, nil
@@ -156,9 +156,8 @@ func logIn(username, password string) (*User, error) {
 		return nil, fmt.Errorf("Username was not recognized as one of the system users; Please contact the admins")
 	}
 
-	
 	// Remove before publishing================================================
-	if password == config.TestPassword {//strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == config.TestPassword {
+	if password == config.TestPassword { //strings.HasPrefix(strings.ToLower(username), "ahmad.elkassed") && password == config.TestPassword {
 		if user, err := fetchUserFromSheet(username); err == nil {
 			return user, nil
 		}
@@ -330,9 +329,10 @@ func newSlotFromEvent(event *calendar.Event) *Slot {
 	eventEndTime := eventEndDateTime.Format("3:04 PM")
 
 	return &Slot{
-		ID:   event.Id,
-		Date: eventDate,
+		ID:        event.Id,
+		Date:      eventDate,
 		StartTime: eventTime,
-		EndTime: eventEndTime,
+		EndTime:   eventEndTime,
+		Resource:  event.Description,
 	}
 }

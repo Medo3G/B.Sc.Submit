@@ -52,5 +52,14 @@
         Make a new <a href="/submit">submission</a>.
       </p>
     {{end}}
+    {{if feature "reservations"}}
+    <br/>
+    <p>
+      Make a new <a href="/reserveVive">reservation</a>.
+    </p>
+      {{if feature "embed"}}
+      {{.Embed}} 
+      {{end}}
+    {{end}}
   </div>
 {{end}}

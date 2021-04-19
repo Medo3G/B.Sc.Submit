@@ -1,18 +1,22 @@
 package submit
 
 import (
-	"time"
-	"strconv"
 	"fmt"
+	"html/template"
+	"strconv"
+	"time"
+
 	// "io"
 	"net/http"
 	"path"
 	"strings"
+
 	// "time"
 	"log"
 
 	"github.com/go-errors/errors"
-	// "github.com/mostafa-alaa-494/b.sc.submit/config"
+	"github.com/mostafa-alaa-494/b.sc.submit/config"
+
 	"github.com/mostafa-alaa-494/b.sc.submit/lib/google"
 	"github.com/mostafa-alaa-494/b.sc.submit/lib/slack"
 )
@@ -29,7 +33,7 @@ func Mux() http.Handler {
 		root, webhook,
 		login, logout,
 		// proposal, submit, reserve,
-		proposal, reserveVive,// reserveVive,
+		proposal, reserveVive, // reserveVive,
 		settings, settingsSlack,
 		adminSessions,
 	} {
@@ -97,7 +101,9 @@ func root() (string, http.HandlerFunc) {
 			return
 		}
 
-		render(w, r, "home", nil)
+		render(w, r, "home", map[string]interface{}{
+			"Embed": template.HTML(config.EvaluationsCalendarEmbed),
+		})
 	}
 }
 
@@ -260,8 +266,6 @@ func proposal() (string, http.HandlerFunc) {
 // 	}
 // }
 
-
-
 func reserveVive() (string, http.HandlerFunc) {
 	return "/reserveVive", func(w http.ResponseWriter, r *http.Request) {
 		if !featureEnabled("reservations") {
@@ -277,11 +281,11 @@ func reserveVive() (string, http.HandlerFunc) {
 			r.ParseForm()
 
 			slotID := strings.TrimSpace(r.FormValue("slot[id]"))
-			unreserve,_ := strconv.ParseBool(strings.TrimSpace(r.FormValue("cancel")))
+			unreserve, _ := strconv.ParseBool(strings.TrimSpace(r.FormValue("cancel")))
 
-			reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
+			reservationTeamName := currentUser(r).TeamName() + ": " + currentUser(r).UserName
 			// if err := google.CalendarReserveTeamSlot(currentUser(r).TeamName(), slotID); err != nil {
-			if(unreserve){
+			if unreserve {
 
 				if err := google.CalendarUnReserveTeamSlot(reservationTeamName, slotID); err != nil {
 					render(w, r, "reserve", map[string]string{
@@ -291,7 +295,7 @@ func reserveVive() (string, http.HandlerFunc) {
 					http.Redirect(w, r, "/reserveVive", http.StatusFound)
 				}
 				return
-				
+
 			}
 			if err := google.CalendarReserveTeamSlot(reservationTeamName, slotID); err != nil {
 				render(w, r, "reserve", map[string]string{
@@ -303,17 +307,17 @@ func reserveVive() (string, http.HandlerFunc) {
 			return
 		}
 
-		reservationTeamName := currentUser(r).TeamName()+": "+currentUser(r).UserName
+		reservationTeamName := currentUser(r).TeamName() + ": " + currentUser(r).UserName
 
 		teamSlots := []*Slot{}
 		tSlots, _ := google.CalendarAllTeamSlot(reservationTeamName)
-		if(tSlots != nil){
+		if tSlots != nil {
 
 			for _, slot := range tSlots.Items {
-			
-				s,_ := time.Parse(time.RFC3339, slot.Start.DateTime)
-				
-				if(time.Now().Before(s)){
+
+				s, _ := time.Parse(time.RFC3339, slot.Start.DateTime)
+
+				if time.Now().Before(s) {
 					newSlot := newSlotFromEvent(slot)
 					teamSlots = append(teamSlots, newSlot)
 				}
@@ -321,7 +325,6 @@ func reserveVive() (string, http.HandlerFunc) {
 			}
 
 		}
-
 
 		schedule := [][]*Slot{}
 
@@ -342,11 +345,10 @@ func reserveVive() (string, http.HandlerFunc) {
 		render(w, r, "reserve", map[string]interface{}{
 			"Schedule": schedule,
 			"Reserved": len(teamSlots) != 0,
-			"Slots": teamSlots,
+			"Slots":    teamSlots,
 		})
 	}
 }
-
 
 func settings() (string, http.HandlerFunc) {
 	return "/settings", func(w http.ResponseWriter, r *http.Request) {

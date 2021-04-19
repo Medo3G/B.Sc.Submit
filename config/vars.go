@@ -11,26 +11,27 @@ var (
 	FeaturesEnabled    = map[string]bool{}
 
 	// Google
-	GoogleAPIClientSecret      = ""
-	GoogleAPIClientToken       = ""
-	StudentsSheetID            = ""
+	GoogleAPIClientSecret = ""
+	GoogleAPIClientToken  = ""
+	StudentsSheetID       = ""
 	// SubmissionsItems           = []map[string]string{}
 	// SubmissionsFolderID        = ""
 	// SubmissionsMetaDescription = "Uploaded By:\n- {{.FullName}}\n- {{.Email}}\n- {{.ID}}"
-	EvaluationsCellRange       = "'Evaluations'!B%d"
-	EvaluationsCalendarID      = "primary"
-	EvaluationsWeekStart       = "1989-03-21T00:00:00+02:00"
-	EvaluationsWeekEnd         = "1989-03-21T00:00:00+02:00"
-	ReservationDaysAhead       = "7"
-	BscWeeklyMinutes		   = "240"
+	EvaluationsCellRange     = "'Evaluations'!B%d"
+	EvaluationsCalendarID    = "primary"
+	EvaluationsCalendarEmbed = ""
+	EvaluationsWeekStart     = "1989-03-21T00:00:00+02:00"
+	EvaluationsWeekEnd       = "1989-03-21T00:00:00+02:00"
+	ReservationDaysAhead     = "7"
+	BscWeeklyMinutes         = "240"
 
-	VRStudetsSheetID           = ""
-	VRCalendarID			   = ""
-	BscVRWeeklyMinutes		   = "360"
+	VRStudetsSheetID   = ""
+	VRCalendarID       = ""
+	BscVRWeeklyMinutes = "360"
 
-	HoloStudentsSheetID		   = ""
-	HoloCalendarID			   = ""
-	BscHoloWeeklyMinutes	   = ""
+	HoloStudentsSheetID  = ""
+	HoloCalendarID       = ""
+	BscHoloWeeklyMinutes = ""
 
 	// Slack
 	SlackTestToken    = ""
