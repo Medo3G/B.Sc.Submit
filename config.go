@@ -40,7 +40,7 @@ func init() {
 
 	config.VRStudetsSheetID = os.Getenv("CONFIG_VR_STUDENTS_SHEET_ID")
 	config.VRCalendarID = os.Getenv("CONFIG_VR_CALENDAR_ID")
-	config.BscVRWeeklyMinutes = os.Getenv("CONFIG_BCS_HOLO_WEEKLY_MINUTES")
+	config.BscVRWeeklyMinutes = os.Getenv("CONFIG_BSC_VR_WEEKLY_MINUTES")
 
 	config.HoloStudentsSheetID = os.Getenv("CONFIG_HOLO_STUDENTS_SHEET_ID")
 	config.HoloCalendarID = os.Getenv("CONFIG_HOLO_CALENDAR_ID")
