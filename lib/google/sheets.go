@@ -56,7 +56,7 @@ func sheetsService() (*sheets.Service, error) {
 
 // SheetsUserInfoBy func
 func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
-	
+
 	service, err := sheetsService()
 	if err != nil {
 		return nil, err
@@ -69,15 +69,15 @@ func SheetsUserInfoBy(field, identifier string) (map[string]string, error) {
 
 	for _, valueRow := range valueRange.Values {
 		userData := map[string]string{
-			"ID":        valueRow[0].(string),
-			"UserName":  strings.SplitN(valueRow[5].(string), "@", 2)[0],
-			"FullName":  valueRow[1].(string),
-			"Email":     valueRow[5].(string),
-			"Group":     valueRow[2].(string),
+			"ID":       valueRow[0].(string),
+			"UserName": strings.SplitN(valueRow[5].(string), "@", 2)[0],
+			"FullName": valueRow[1].(string),
+			"Email":    valueRow[5].(string),
+			"Group":    valueRow[2].(string),
 			// "Team":      util.FormatTeamName(valueRow[3]),
 			"Team":      valueRow[3].(string),
 			"TeamGroup": valueRow[4].(string),
-			"Category":	 valueRow[6].(string),
+			"Category":  valueRow[6].(string),
 		}
 		if strings.ToLower(userData[field]) == strings.ToLower(identifier) {
 			return userData, nil
