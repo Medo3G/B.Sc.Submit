@@ -11,5 +11,3 @@ require (
 	golang.org/x/oauth2 v0.0.0-20210413134643-5e61552d6c78 // indirect
 	google.golang.org/api v0.44.0 // indirect
 )
-
-replace github.com/mostafa-alaa-494/b.sc.submit => .\B.Sc.Submit
