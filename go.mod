@@ -1,4 +1,4 @@
-module github.com/medo3g/b.sc.submit
+module github.com/mmedo3g/b.sc.submit
 
 go 1.16
 
