@@ -1,1 +1,1 @@
-web: B.Sc.Submit
+web: B.Sc.Submit/submit
