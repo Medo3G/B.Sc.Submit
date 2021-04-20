@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mostafa-alaa-494/b.sc.submit/config"
+	"github.com/medo3g/b.sc.submit/config"
 	calendar "google.golang.org/api/calendar/v3"
 )
 

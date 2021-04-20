@@ -20,8 +20,8 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/mostafa-alaa-494/b.sc.submit/config"
-	"github.com/mostafa-alaa-494/b.sc.submit/lib/google"
+	"github.com/medo3g/b.sc.submit/config"
+	"github.com/medo3g/b.sc.submit/lib/google"
 	httpntlm "github.com/vadimi/go-http-ntlm"
 	calendar "google.golang.org/api/calendar/v3"
 )

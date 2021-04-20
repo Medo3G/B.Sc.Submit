@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mostafa-alaa-494/b.sc.submit/config"
-	// "github.com/mostafa-alaa-494/b.sc.submit/lib/util"
+	"github.com/medo3g/b.sc.submit/config"
+	// "github.com/medo3g/b.sc.submit/lib/util"
 	sheets "google.golang.org/api/sheets/v4"
 )
 
