@@ -1,1 +1,1 @@
-web: B.Sc.Submit/submit
+web: go run .
