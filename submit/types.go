@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/medo3g/b.sc.submit/lib/google"
+	"github.com/medo3g/b.sc.submit/submit/lib/google"
 )
 
 // Session struct

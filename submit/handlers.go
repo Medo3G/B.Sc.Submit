@@ -15,10 +15,10 @@ import (
 	"log"
 
 	"github.com/go-errors/errors"
-	"github.com/medo3g/b.sc.submit/config"
+	"github.com/medo3g/b.sc.submit/submit/config"
 
-	"github.com/medo3g/b.sc.submit/lib/google"
-	"github.com/medo3g/b.sc.submit/lib/slack"
+	"github.com/medo3g/b.sc.submit/submit/lib/google"
+	"github.com/medo3g/b.sc.submit/submit/lib/slack"
 )
 
 var (

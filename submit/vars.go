@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/medo3g/b.sc.submit/config"
+	"github.com/medo3g/b.sc.submit/submit/config"
 )
 
 var (
