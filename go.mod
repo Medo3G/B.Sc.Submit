@@ -1,3 +1,3 @@
-module github.com/mostafa-alaa-494/b.sc.submit
+module github.com/medo3g/b.sc.submit
 
 go 1.16

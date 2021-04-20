@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mostafa-alaa-494/b.sc.submit/config"
+	"github.com/medo3g/b.sc.submit/config"
 )
 
 var (
