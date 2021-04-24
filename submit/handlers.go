@@ -2,7 +2,6 @@ package submit
 
 import (
 	"fmt"
-	"html/template"
 	"strconv"
 	"time"
 
@@ -15,7 +14,6 @@ import (
 	"log"
 
 	"github.com/go-errors/errors"
-	"github.com/medo3g/b.sc.submit/submit/config"
 
 	"github.com/medo3g/b.sc.submit/submit/lib/google"
 	"github.com/medo3g/b.sc.submit/submit/lib/slack"
@@ -101,9 +99,7 @@ func root() (string, http.HandlerFunc) {
 			return
 		}
 
-		render(w, r, "home", map[string]interface{}{
-			"Embed": template.HTML(config.EvaluationsCalendarEmbed),
-		})
+		render(w, r, "home", nil)
 	}
 }
 

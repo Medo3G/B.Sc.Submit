@@ -82,6 +82,9 @@ func render(w io.Writer, r *http.Request, t string, data interface{}) {
 		"feature": func(name string) bool {
 			return featureEnabled(name)
 		},
+		"embed": func() string {
+			return config.EvaluationsCalendarEmbed
+		},
 	})
 	tmpl = template.Must(tmpl.ParseFiles(fmt.Sprintf(path.Join(tmplDir, "%s.tmpl"), t)))
 	tmpl = template.Must(tmpl.ParseGlob(path.Join(tmplDir, "layouts", "*.tmpl")))
