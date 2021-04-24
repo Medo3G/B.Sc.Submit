@@ -49,6 +49,7 @@ func CalendarFreeSlots() ([]*calendar.Event, error) {
 
 	slots, err := service.Events.
 		List(config.EvaluationsCalendarID).
+		MaxResults(2500).
 		SingleEvents(true).
 		OrderBy("startTime").
 		TimeMin(timeMin.Format(time.RFC3339)).
