@@ -76,7 +76,7 @@
           
             <!-- <td class="mdl-data-table__cell--non-numeric">No confirmation</td> -->
             <td style="text-align:center;">
-              <form action="/reserveVive" method="POST">
+              <form action="/reserve" method="POST">
               <input type="hidden" name="slot[id]" value="{{.ID}}">
               <input type="hidden" name="cancel" value="true">
               <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
@@ -123,7 +123,7 @@
                     {{.Resource}}
                   </span>
                   <span class="mdl-list__item-secondary-action">
-                    <form action="/reserveVive" method="POST">
+                    <form action="/reserve" method="POST">
                       <input type="hidden" name="slot[id]" value="{{.ID}}">
                       <input type="hidden" name="cancel" value="false">
                       <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">

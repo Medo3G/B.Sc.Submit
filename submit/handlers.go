@@ -31,7 +31,7 @@ func Mux() http.Handler {
 		root, webhook,
 		login, logout,
 		// proposal, submit, reserve,
-		proposal, reserveVive, // reserveVive,
+		proposal, reserve, // reserveVive,
 		settings, settingsSlack,
 		adminSessions,
 	} {
@@ -262,8 +262,8 @@ func proposal() (string, http.HandlerFunc) {
 // 	}
 // }
 
-func reserveVive() (string, http.HandlerFunc) {
-	return "/reserveVive", func(w http.ResponseWriter, r *http.Request) {
+func reserve() (string, http.HandlerFunc) {
+	return "/reserve", func(w http.ResponseWriter, r *http.Request) {
 		if !featureEnabled("reservations") {
 			http.NotFound(w, r)
 			return
@@ -288,7 +288,7 @@ func reserveVive() (string, http.HandlerFunc) {
 						"Flash": err.Error(),
 					})
 				} else {
-					http.Redirect(w, r, "/reserveVive", http.StatusFound)
+					http.Redirect(w, r, "/reserve", http.StatusFound)
 				}
 				return
 
@@ -298,7 +298,7 @@ func reserveVive() (string, http.HandlerFunc) {
 					"Flash": err.Error(),
 				})
 			} else {
-				http.Redirect(w, r, "/reserveVive", http.StatusFound)
+				http.Redirect(w, r, "/reserve", http.StatusFound)
 			}
 			return
 		}
