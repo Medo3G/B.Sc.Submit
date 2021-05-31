@@ -113,6 +113,7 @@ func login() (string, http.HandlerFunc) {
 			password := strings.TrimSpace(r.FormValue("session[password]"))
 
 			username = strings.Split(username, "@")[0]
+			username = strings.ToLower(username)
 
 			if username == "" || password == "" {
 				render(w, r, "login", map[string]string{
