@@ -166,7 +166,7 @@ func logIn(username, password string) (*User, error) {
 		}
 	}
 
-	ntlmServer := "http://student.guc.edu.eg"
+	ntlmServer := "https://student.guc.edu.eg"
 	ntlmPath := "/External/Student/Data/UpdateSystemUserData.aspx"
 
 	client := http.Client{
